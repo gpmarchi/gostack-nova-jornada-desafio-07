@@ -30,7 +30,13 @@ const CartProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     async function loadProducts(): Promise<void> {
-      // TODO LOAD ITEMS FROM ASYNC STORAGE
+      const savedCartProducts = await AsyncStorage.getItem(
+        '@GoMarketplace:products',
+      );
+
+      if (savedCartProducts) {
+        setProducts(JSON.parse(savedCartProducts));
+      }
     }
 
     loadProducts();
@@ -55,11 +61,23 @@ const CartProvider: React.FC = ({ children }) => {
         });
 
         setProducts(updatedCartProducts);
+
+        await AsyncStorage.setItem(
+          '@GoMarketplace:products',
+          JSON.stringify(updatedCartProducts),
+        );
       } else {
         const productToAdd = product;
         productToAdd.quantity = 1;
 
-        setProducts([...products, productToAdd]);
+        const newProducts = [...products, productToAdd];
+
+        setProducts(newProducts);
+
+        await AsyncStorage.setItem(
+          '@GoMarketplace:products',
+          JSON.stringify(newProducts),
+        );
       }
     },
     [products],
@@ -79,6 +97,11 @@ const CartProvider: React.FC = ({ children }) => {
       });
 
       setProducts(incrementedCartProducts);
+
+      await AsyncStorage.setItem(
+        '@GoMarketplace:products',
+        JSON.stringify(incrementedCartProducts),
+      );
     },
     [products],
   );
@@ -97,6 +120,11 @@ const CartProvider: React.FC = ({ children }) => {
       });
 
       setProducts(decrementedCartProducts);
+
+      await AsyncStorage.setItem(
+        '@GoMarketplace:products',
+        JSON.stringify(decrementedCartProducts),
+      );
     },
     [products],
   );
