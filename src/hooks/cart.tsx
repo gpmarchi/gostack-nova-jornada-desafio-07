@@ -43,14 +43,24 @@ const CartProvider: React.FC = ({ children }) => {
       );
 
       if (productToAddExists) {
-        productToAddExists.quantity += 1;
-        return;
+        const updatedCartProducts = products.map(cartProduct => {
+          if (cartProduct.id === product.id) {
+            return {
+              ...cartProduct,
+              quantity: cartProduct.quantity + 1,
+            };
+          }
+
+          return cartProduct;
+        });
+
+        setProducts(updatedCartProducts);
+      } else {
+        const productToAdd = product;
+        productToAdd.quantity = 1;
+
+        setProducts([...products, productToAdd]);
       }
-
-      const productToAdd = product;
-      productToAdd.quantity = 1;
-
-      setProducts([...products, productToAdd]);
     },
     [products],
   );
